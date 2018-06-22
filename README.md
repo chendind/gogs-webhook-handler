@@ -12,6 +12,9 @@ There are two main differents with Gihub webhook and Gogs webhook:
 
 This library is a small handler (or "middleware" if you must) for Node.js web servers that handles all the logic of receiving and verifying webhook requests from Gogs.
 
+## Install 
+`npm i gogs-webhook-handler`
+
 ## Tips
 
 In Gogs Webhooks settings, Content type must be `application/json`.
