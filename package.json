@@ -1,6 +1,6 @@
 {
   "name": "gogs-webhook-handler",
-  "version": "0.7.1",
+  "version": "0.0.1",
   "description": "Web handler / middleware for processing Gogs Webhooks",
   "main": "gogs-webhook-handler.js",
   "types": "gogs-webhook-handler.d.ts",
@@ -11,10 +11,10 @@
     "gogs",
     "webhooks"
   ],
-  "author": "Rod Vagg <r@va.gg> (http://r.va.gg)",
+  "author": "Chen Dingding <chendind@xiyoukeji.com> (http://www.xiyoukeji.com)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rvagg/github-webhook-handler.git"
+    "url": "https://github.com/chendind/gogs-webhook-handler.git"
   },
   "license": "MIT",
   "dependencies": {
