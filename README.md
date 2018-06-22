@@ -1,8 +1,14 @@
 # gogs-webhook-handler
 
+## Thanks to [github-webhook-handler](https://github.com/rvagg/github-webhook-handler)
+
 [![NPM](https://nodei.co/npm/gogs-webhook-handler.png?downloads=true&downloadRank=true)](https://nodei.co/npm/gogs-webhook-handler/)
 [![NPM](https://nodei.co/npm-dl/gogs-webhook-handler.png?months=6&height=3)](https://nodei.co/npm/gogs-webhook-handler/)
 
+[Gogs](https://gogs.io/) is a painless self-hosted Git service. But unfortunately there is no any webhook handler for Gogs. I modified Rod Vagg [@rvagg](https://twitter.com/rvagg)'s [github-webhook-handler](https://github.com/rvagg/github-webhook-handler) so that this package could do well in Gogs.
+There are two main differents with Gihub webhook and Gogs webhook:
+- In request header, Gogs uses `x-gogs-signature`, `x-gogs-event`, `x-gogs-delivery` instead of `x-hub-signature`, `x-github-event`, `x-github-delivery`. You can view more details in [Gogs Webhooks documentation](https://gogs.io/docs/features/webhook)
+- Gogs uses `SHA256` to generates a hash with your secret instead of `SHA1`. You can view more details in [Crypto](https://github.com/chrisveness/crypto)
 
 This library is a small handler (or "middleware" if you must) for Node.js web servers that handles all the logic of receiving and verifying webhook requests from Gogs.
 
@@ -15,28 +21,35 @@ In Gogs Webhooks settings, Content type must be `application/json`.
 ## Example
 
 ```js
-var http = require('http')
-var createHandler = require('gogs-webhook-handler')
-var handler = createHandler({ path: '/webhook', secret: 'myhashsecret' })
+const http = require('http')
+const createHandler = require('gogs-webhook-handler')
+const handler = createHandler({ path: '/webhook', secret: 'myhashsecret' })
+const process = require('child_process')
 
-http.createServer(function (req, res) {
-  handler(req, res, function (err) {
+http.createServer((req, res) => {
+  handler(req, res, err => {
     res.statusCode = 404
-    res.end('no such location')
+    res.end('webhook is running~~')
   })
 }).listen(7777)
 
-handler.on('error', function (err) {
+handler.on('error', err => {
   console.error('Error:', err.message)
 })
 
-handler.on('push', function (event) {
-  console.log('Received a push event for %s to %s',
-    event.payload.repository.name,
-    event.payload.ref)
+handler.on('push', event => {
+  try{
+    process.execSync('git pull')
+  } catch (e) {
+    process.execSync('git checkout -- "*"')
+    process.execSync('git pull')
+  }
+  process.execSync('npm i')
+  process.execSync('npm stop')
+  process.execSync('npm start')
 })
 
-handler.on('issues', function (event) {
+handler.on('issues', event => {
   console.log('Received an issue event for %s action=%s: #%d %s',
     event.payload.repository.name,
     event.payload.action,
@@ -50,8 +63,8 @@ handler.on('issues', function (event) {
 gogs-webhook-handler exports a single function, use this function to *create* a webhook handler by passing in an *options* object. Your options object should contain:
 
  * `"path"`: the complete case sensitive path/route to match when looking at `req.url` for incoming requests. Any request not matching this path will cause the callback function to the handler to be called (sometimes called the `next` handler).
- * `"secret"`: this is a hash key used for creating the SHA-1 HMAC signature of the JSON blob sent by GitHub. You should register the same secret key with GitHub. Any request not delivering a `X-Hub-Signature` that matches the signature generated using this key against the blob will be rejected and cause an `'error'` event (also the callback will be called with an `Error` object).
- * `"events"`: an optional array of whitelisted event types (see: *events.json*). If defined, any incoming request whose `X-Github-Event` can't be found in the whitelist will be rejected. If only a single event type is acceptable, this option can also be a string.
+ * `"secret"`: this is a hash key used for creating the SHA-1 HMAC signature of the JSON blob sent by GitHub. You should register the same secret key with GitHub. Any request not delivering a `X-Gogs-Signature` that matches the signature generated using this key against the blob will be rejected and cause an `'error'` event (also the callback will be called with an `Error` object).
+ * `"events"`: an optional array of whitelisted event types (see: *events.json*). If defined, any incoming request whose `X-Gogs-Event` can't be found in the whitelist will be rejected. If only a single event type is acceptable, this option can also be a string.
 
 The resulting **handler** function acts like a common "middleware" handler that you can insert into a processing chain. It takes `request`, `response`, and `callback` arguments. The `callback` is not called if the request is successfully handled, otherwise it is called either with an `Error` or no arguments.
 

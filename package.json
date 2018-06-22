@@ -1,6 +1,6 @@
 {
   "name": "gogs-webhook-handler",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Web handler / middleware for processing Gogs Webhooks",
   "main": "gogs-webhook-handler.js",
   "types": "gogs-webhook-handler.d.ts",
