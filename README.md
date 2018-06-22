@@ -1,14 +1,14 @@
 # gogs-webhook-handler
 
-## Thanks to [github-webhook-handler](https://github.com/rvagg/github-webhook-handler)
-
 [![NPM](https://nodei.co/npm/gogs-webhook-handler.png?downloads=true&downloadRank=true)](https://nodei.co/npm/gogs-webhook-handler/)
 [![NPM](https://nodei.co/npm-dl/gogs-webhook-handler.png?months=6&height=3)](https://nodei.co/npm/gogs-webhook-handler/)
 
+## Thanks to [github-webhook-handler](https://github.com/rvagg/github-webhook-handler)
+
 [Gogs](https://gogs.io/) is a painless self-hosted Git service. But unfortunately there is no any webhook handler for Gogs. I modified Rod Vagg [@rvagg](https://twitter.com/rvagg)'s [github-webhook-handler](https://github.com/rvagg/github-webhook-handler) so that this package could do well in Gogs.
 There are two main differents with Gihub webhook and Gogs webhook:
-- In request header, Gogs uses `x-gogs-signature`, `x-gogs-event`, `x-gogs-delivery` instead of `x-hub-signature`, `x-github-event`, `x-github-delivery`. You can view more details in [Gogs Webhooks documentation](https://gogs.io/docs/features/webhook)
-- Gogs uses `SHA256` to generates a hash with your secret instead of `SHA1`. You can view more details in [Crypto](https://github.com/chrisveness/crypto)
+- In request header, Gogs uses `x-gogs-signature`, `x-gogs-event`, `x-gogs-delivery` instead of `x-hub-signature`, `x-github-event`, `x-github-delivery`
+- Gogs uses `SHA256` to generates a hash with your secret instead of `SHA1`
 
 This library is a small handler (or "middleware" if you must) for Node.js web servers that handles all the logic of receiving and verifying webhook requests from Gogs.
 
